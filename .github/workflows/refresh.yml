@@ -27,6 +27,8 @@ jobs:
           python-version: "3.12"
 
       - name: Pull fresh FRED data
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python3 build_data.py
 
       - name: Commit updated data (if changed)

@@ -5,6 +5,10 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+if [ -f .env ]; then
+  set -a; source .env; set +a
+fi
+
 LOG="logs/refresh-$(date +%Y-%m-%d).log"
 mkdir -p logs
 

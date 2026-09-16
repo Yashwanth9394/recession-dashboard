@@ -2,31 +2,34 @@
 """Pulls all verified FRED series, computes threshold/percentile context, writes dashboard-data.json.
 Meant to be re-run on a schedule (weekly) to refresh the live artifact's data."""
 import json
+import os
 import urllib.request
 import datetime
 import sys
 from series_config import SERIES
 
-FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={}"
+FRED_API = "https://api.stlouisfed.org/fred/series/observations?series_id={}&api_key={}&file_type=json"
 LOOKBACK_YEARS = 20
 PCTL_YEARS = 10
 
+FRED_API_KEY = os.environ.get("FRED_API_KEY")
+if not FRED_API_KEY:
+    sys.exit("FRED_API_KEY environment variable is not set. Get a free key at "
+              "https://fred.stlouisfed.org/docs/api/api_key.html and export it before running.")
+
 
 def fetch_series(series_id):
-    url = FRED_CSV.format(series_id)
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    url = FRED_API.format(series_id, FRED_API_KEY)
+    req = urllib.request.Request(url, headers={"User-Agent": "fault-line-dashboard/1.0"})
     with urllib.request.urlopen(req, timeout=30) as resp:
-        text = resp.read().decode("utf-8")
+        payload = json.loads(resp.read().decode("utf-8"))
     rows = []
-    for line in text.strip().splitlines()[1:]:
-        parts = line.split(",")
-        if len(parts) != 2:
-            continue
-        date_str, val_str = parts
-        if val_str.strip() in (".", ""):
+    for obs in payload["observations"]:
+        val_str = obs["value"].strip()
+        if val_str in (".", ""):
             continue
         try:
-            rows.append((date_str, float(val_str)))
+            rows.append((obs["date"], float(val_str)))
         except ValueError:
             continue
     return rows
