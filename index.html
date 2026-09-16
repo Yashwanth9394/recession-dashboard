@@ -1,0 +1,493 @@
+<title>Fault Line</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#EEF1EF; --surface:#FFFFFF; --surface-2:#F5F8F7;
+    --ink:#161A19; --ink-2:#4B5654; --ink-3:#7A8583;
+    --border:#D8DEDC; --border-soft:#E4E9E7;
+    --accent:#1E4B4F; --accent-soft:#DCE8E7;
+    --calm:#1F8F5C; --calm-soft:#E4F3EC;
+    --watch:#B07A1E; --watch-soft:#F6ECD8;
+    --critical:#B23A56; --critical-soft:#F8E3E9;
+    --context:#6B7472; --context-soft:#E9EDEC;
+    --bomb-bg:#FBF3E7; --bomb-border:#E4C88F;
+    --shadow: 0 1px 2px rgba(20,30,28,0.06), 0 4px 12px rgba(20,30,28,0.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0E1412; --surface:#161D1B; --surface-2:#1B2320;
+      --ink:#E7ECEA; --ink-2:#A8B3B0; --ink-3:#6E7A77;
+      --border:#2A332F; --border-soft:#212B27;
+      --accent:#5FB3B8; --accent-soft:#1C3436;
+      --calm:#3FA377; --calm-soft:#16281F;
+      --watch:#C99A3E; --watch-soft:#2E2716;
+      --critical:#D9647E; --critical-soft:#301B21;
+      --context:#8A9694; --context-soft:#1D2523;
+      --bomb-bg:#241D12; --bomb-border:#4A3B1E;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0E1412; --surface:#161D1B; --surface-2:#1B2320;
+    --ink:#E7ECEA; --ink-2:#A8B3B0; --ink-3:#6E7A77;
+    --border:#2A332F; --border-soft:#212B27;
+    --accent:#5FB3B8; --accent-soft:#1C3436;
+    --calm:#3FA377; --calm-soft:#16281F;
+    --watch:#C99A3E; --watch-soft:#2E2716;
+    --critical:#D9647E; --critical-soft:#301B21;
+    --context:#8A9694; --context-soft:#1D2523;
+    --bomb-bg:#241D12; --bomb-border:#4A3B1E;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.35);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    padding-inline:20px; padding-block:28px 64px;
+    max-width:1180px; margin:0 auto;
+  }
+  h1,h2,h3{font-family:'IBM Plex Serif', Georgia, serif; text-wrap:balance; margin:0;}
+  .mono{font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums;}
+  a{color:var(--accent);}
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex; flex-direction:column; gap:16px;
+    padding-bottom:24px; border-bottom:2px solid var(--ink);
+    margin-bottom:32px;
+  }
+  .masthead{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px;}
+  .masthead h1{font-size:2.4rem; font-weight:700; letter-spacing:-0.01em;}
+  .masthead .tagline{color:var(--ink-2); font-size:0.95rem; max-width:52ch; margin-top:6px;}
+  .updated{font-size:0.8rem; color:var(--ink-3); text-align:right;}
+  .summary-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .summary-pill{
+    display:flex; align-items:center; gap:8px;
+    padding:8px 14px; border-radius:3px; border:1px solid var(--border);
+    background:var(--surface); font-size:0.85rem;
+  }
+  .summary-pill .n{font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:1.1rem;}
+  .dot{width:9px; height:9px; border-radius:50%; flex:none;}
+
+  /* ---------- Sections ---------- */
+  section{margin-bottom:44px;}
+  .section-head{margin-bottom:16px;}
+  .eyebrow{
+    font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin-bottom:4px; display:block;
+  }
+  .section-head h2{font-size:1.5rem;}
+  .section-head p{color:var(--ink-2); font-size:0.92rem; margin-top:4px; max-width:62ch;}
+
+  /* ---------- Time bomb cards ---------- */
+  .bomb-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px;}
+  .bomb-card{
+    background:var(--bomb-bg); border:1px solid var(--bomb-border); border-radius:4px;
+    padding:20px; display:flex; flex-direction:column; gap:10px;
+  }
+  .bomb-card h3{font-size:1.05rem; color:var(--ink);}
+  .bomb-number{font-family:'IBM Plex Mono',monospace; font-size:1.7rem; font-weight:600; color:var(--watch);}
+  .bomb-card p{font-size:0.88rem; color:var(--ink-2); line-height:1.55; margin:0;}
+  .bomb-meta{font-size:0.76rem; color:var(--ink-3); border-top:1px dashed var(--bomb-border); padding-top:10px; margin-top:auto;}
+
+  /* ---------- Card grid ---------- */
+  .card-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:14px;}
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:4px;
+    padding:14px 16px 12px; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px;}
+  .card-label{font-size:0.82rem; font-weight:500; line-height:1.3;}
+  .status-pill{
+    flex:none; font-size:0.66rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;
+    padding:3px 7px; border-radius:2px; display:flex; align-items:center; gap:5px; white-space:nowrap;
+  }
+  .status-calm{background:var(--calm-soft); color:var(--calm);}
+  .status-watch{background:var(--watch-soft); color:var(--watch);}
+  .status-critical{background:var(--critical-soft); color:var(--critical);}
+  .status-context{background:var(--context-soft); color:var(--context);}
+  .card-value{display:flex; align-items:baseline; gap:6px;}
+  .card-value .v{font-family:'IBM Plex Mono',monospace; font-size:1.35rem; font-weight:600;}
+  .card-value .u{font-size:0.72rem; color:var(--ink-3);}
+  .chart-wrap{position:relative;}
+  .chart-wrap svg{display:block; width:100%; height:auto; overflow:visible;}
+  .card-foot{display:flex; justify-content:space-between; font-size:0.7rem; color:var(--ink-3);}
+
+  .tooltip{
+    position:fixed; pointer-events:none; z-index:50;
+    background:var(--ink); color:var(--bg); font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem; padding:5px 8px; border-radius:3px; white-space:nowrap;
+    opacity:0; transition:opacity 0.08s;
+  }
+
+  /* ---------- Lag context ---------- */
+  .lag-note{
+    font-size:0.78rem; color:var(--ink-2); background:var(--surface-2);
+    border-left:3px solid var(--accent); padding:8px 12px; margin-top:2px;
+    line-height:1.5;
+  }
+
+  footer{
+    border-top:1px solid var(--border); padding-top:20px; margin-top:20px;
+    font-size:0.8rem; color:var(--ink-3); line-height:1.6;
+  }
+  footer strong{color:var(--ink-2);}
+
+  /* ---------- Forward stress map ---------- */
+  #stress-map th, #stress-map td{
+    padding:10px 12px; text-align:left; border-bottom:1px solid var(--border-soft); vertical-align:top;
+  }
+  #stress-map thead th{
+    font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); font-weight:600;
+    border-bottom:2px solid var(--ink);
+  }
+  #stress-map tbody th{font-weight:600; font-size:0.85rem; white-space:nowrap;}
+  .sm-empty{color:var(--ink-3); font-size:0.78rem;}
+  .sm-event{
+    display:block; font-size:0.76rem; line-height:1.4; padding:4px 0;
+  }
+  .sm-event .amt{font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--watch);}
+
+  /* ---------- Price cards (nominal vs real) ---------- */
+  .inflation-note{font-size:0.72rem; color:var(--ink-3); display:flex; align-items:center; gap:6px;}
+  .inflation-note .legend-line{display:inline-block; width:14px; height:0; border-top:2px dashed var(--ink-3);}
+
+  @media (max-width:520px){
+    .masthead h1{font-size:1.9rem;}
+    .masthead{flex-direction:column; align-items:flex-start;}
+    .updated{text-align:left;}
+  }
+</style>
+
+<header>
+  <div class="masthead">
+    <div>
+      <h1>Fault Line</h1>
+      <div class="tagline">Fifty-nine verified economic-stress indicators, refreshed on a weekly cycle, plus the debt already scheduled to come due &mdash; read together instead of one at a time.</div>
+    </div>
+    <div class="updated" id="updated-stamp">Loading data&hellip;</div>
+  </div>
+  <div class="summary-row" id="summary-row"></div>
+</header>
+
+<section id="bombs-section">
+  <div class="section-head">
+    <span class="eyebrow">Tier 2 &middot; Scheduled signals &mdash; strongest for timing</span>
+    <h2>Structural time bombs</h2>
+    <p>Not live feeds &mdash; contracts, maturity schedules, and historical lag statistics that already fix a future window, the same way a 2005 teaser-rate mortgage had its reset date written into the loan on day one. The question each one answers: <em>what pain is already locked into today's system but hasn't shown up in today's data yet?</em> Updated by hand when the underlying report updates, each stamped with its own date.</p>
+  </div>
+  <div class="bomb-grid">
+    <div class="bomb-card">
+      <h3>Commercial real estate maturity wall</h3>
+      <div class="bomb-number">$875&ndash;936B <span style="font-size:0.95rem;font-weight:500;color:var(--ink-2);">due in 2026</span></div>
+      <p>Loans written in 2015&ndash;2021 at ~3&ndash;4% rates carry fixed maturity dates &mdash; not "pay whenever." When the date arrives, the owner must refinance at today's ~6.2% or sell. If a building's rent doesn't cover the new payment, default follows. A further $652B matures in 2027.</p>
+      <div class="bomb-meta">Source: Mortgage Bankers Association / S&amp;P Global &middot; as of Aug 2026</div>
+    </div>
+    <div class="bomb-card">
+      <h3>Corporate debt maturity wall</h3>
+      <div class="bomb-number">$268.8B <span style="font-size:0.95rem;font-weight:500;color:var(--ink-2);">B-and-below rated debt due 2028</span></div>
+      <p>The weakest-rated borrowers hit their wall first &mdash; 2028, concentrated in the US &mdash; while the aggregate speculative-grade peak has actually been <em>pushed out</em> to 2031 (it was 2029 in April, 2028 in January) as 2025's active refinancing wave moved borrowers ahead of schedule. That's its own signal: the system is deferring this one, not resolving it.</p>
+      <div class="bomb-meta">Source: S&amp;P Global Ratings, Industry Credit Outlook 2026</div>
+    </div>
+    <div class="bomb-card">
+      <h3>Auto loan negative equity</h3>
+      <div class="bomb-number">30% <span style="font-size:0.95rem;font-weight:500;color:var(--ink-2);">of trade-ins underwater</span></div>
+      <p>Average shortfall $7,200, up 42% in five years. 90.2% of these loans stretch to 72+ months &mdash; the term extension defers the reckoning to the next trade-in or refinance, the same deferred-pain shape as a teaser-rate reset, just via loan length instead of interest rate.</p>
+      <div class="bomb-meta">Source: Edmunds Q1 2026 Insights Report</div>
+    </div>
+    <div class="bomb-card">
+      <h3>Monetary policy lag</h3>
+      <div class="bomb-number">18&ndash;29 <span style="font-size:0.95rem;font-weight:500;color:var(--ink-2);">months, hike to full effect</span></div>
+      <p>Housing reacts to rate changes within months; business investment, hiring, and consumer spending arrive last. Whatever the Fed did a year and a half to two and a half years ago is still working through the system now, regardless of what rates are doing today.</p>
+      <div class="bomb-meta">Source: Fed transmission-lag meta-analysis; Atlanta Fed</div>
+    </div>
+    <div class="bomb-card">
+      <h3>Leverage amplifiers</h3>
+      <div class="bomb-number">Record <span style="font-size:0.95rem;font-weight:500;color:var(--ink-2);">hedge fund gross leverage</span></div>
+      <p>Not a scheduled event &mdash; a buffer check. Hedge fund gross notional leverage sits at near all-time highs and large life insurers remain in the upper quartile of their historical leverage range. These don't cause a shock, but they determine how hard one gets amplified if it arrives. Counterweight: the Fed still describes banks overall as well-capitalized.</p>
+      <div class="bomb-meta">Source: Federal Reserve Financial Stability Report, May 2026</div>
+    </div>
+    <div class="bomb-card">
+      <h3>Household buffer check</h3>
+      <div class="bomb-number">3.00% <span style="font-size:0.95rem;font-weight:500;color:var(--ink-2);">auto flow-to-serious-delinquency</span></div>
+      <p>Up from 2.93% a year earlier; credit card flow held flat near 6.97%. Not an explosion by itself &mdash; but it tells us how much cushion households have left when the next scheduled shock (the CRE or corporate wall above) actually lands.</p>
+      <div class="bomb-meta">Source: NY Fed Household Debt and Credit Report, Q2 2026 (Aug 2026)</div>
+    </div>
+  </div>
+</section>
+
+<section id="forward-map-section">
+  <div class="section-head">
+    <span class="eyebrow">Reading Tier 1 and Tier 2 together</span>
+    <h2>Forward stress map</h2>
+    <p>"Now" is a real read of this page's live indicators for that sector (worst status among its cards). The year columns show only what's actually <strong>scheduled</strong> to land there, sourced from Tier 2 &mdash; never a projected score. An empty cell means no dated event is tracked for that sector, not that it's safe.</p>
+  </div>
+  <div id="stress-map-wrap" style="overflow-x:auto;">
+    <table id="stress-map" style="width:100%; border-collapse:collapse; font-size:0.82rem; min-width:640px;">
+      <thead><tr id="stress-map-head"></tr></thead>
+      <tbody id="stress-map-body"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="live-section">
+  <div class="section-head">
+    <span class="eyebrow">Tier 1 &middot; Leading signals &mdash; is the system weakening now</span>
+    <h2>Live signals</h2>
+    <p>Each card shows the current reading against its own 10-year range. <span class="status-pill status-critical" style="display:inline-flex;">critical</span> means the worst ~10% of the last decade or a documented official trigger line has been crossed; <span class="status-pill status-watch" style="display:inline-flex;">watch</span> is the next ~15%. Grey bands mark NBER-dated recessions. These answer "is it weakening," not "when does it break" &mdash; that's what Tier 2 and the map below are for.</p>
+  </div>
+  <div id="categories"></div>
+</section>
+
+<footer id="footer">Loading methodology&hellip;</footer>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const CATEGORY_ORDER = ["Housing & Mortgage","Consumer Credit","Labor Market","Composite Recession Models","Credit Markets","Business & CRE","Production & Spending","Money & Macro","Income & Cost of Living"];
+const CATEGORY_NOTE = {
+  "Housing & Mortgage":"Home prices, construction, and mortgage distress.",
+  "Consumer Credit":"Whether households are keeping up with debt payments.",
+  "Labor Market":"Jobs, hours, and hiring momentum &mdash; usually the first mover.",
+  "Composite Recession Models":"Multi-indicator models built specifically to call recessions.",
+  "Credit Markets":"What lenders and bond markets are pricing in.",
+  "Business & CRE":"Corporate and commercial real estate loan stress.",
+  "Production & Spending":"Real output and discretionary spending, not just sentiment.",
+  "Money & Macro":"The broad backdrop &mdash; growth, savings, and money supply.",
+  "Income & Cost of Living":"What households actually earn and pay day to day."
+};
+const LAG_NOTES = {
+  "T10Y3M":"Every US recession since 1970 followed a curve inversion; the gap has historically run 6&ndash;24 months (median ~14&ndash;15) after first inverting &mdash; not a countdown, a base rate.",
+  "SAHMREALTIME":"Flagged every US recession since 1970 with no false signal &mdash; until July 2024, when it triggered with none following (still none as of this data's date, per the rule's own creator)."
+};
+
+function fmtNum(v, unit){
+  if (unit === "$B" || unit === "$M") return v.toLocaleString(undefined,{maximumFractionDigits:0});
+  if (Math.abs(v) >= 1000) return v.toLocaleString(undefined,{maximumFractionDigits:0});
+  return v.toLocaleString(undefined,{maximumFractionDigits:2});
+}
+
+function getStatus(s){
+  if (s.higher_is_worse === null || s.higher_is_worse === undefined) return "context";
+  const pctl = s.percentile_10yr ?? 50;
+  const eff = s.higher_is_worse ? pctl : (100 - pctl);
+  let breach = false;
+  if (s.threshold){
+    const t = s.threshold[0];
+    breach = s.higher_is_worse ? s.latest_value >= t : s.latest_value <= t;
+  }
+  if (breach || eff >= 90) return "critical";
+  if (eff >= 75) return "watch";
+  return "calm";
+}
+
+function recessionRanges(usrec){
+  if (!usrec) return [];
+  const ranges = []; let start = null;
+  usrec.data.forEach((p,i)=>{
+    const t = new Date(p.d).getTime();
+    if (p.v >= 1 && start === null) start = t;
+    if (p.v < 1 && start !== null){ ranges.push([start, t]); start = null; }
+  });
+  if (start !== null) ranges.push([start, new Date(usrec.data[usrec.data.length-1].d).getTime()]);
+  return ranges;
+}
+
+function drawChart(series, status, recRanges){
+  const W = 280, H = 92, PAD_L = 4, PAD_R = 4, PAD_T = 6, PAD_B = 4;
+  const data = series.data;
+  const xs = data.map(p=>new Date(p.d).getTime());
+  const ys = data.map(p=>p.v).concat(series.real_data ? series.real_data.map(p=>p.v) : []);
+  let ymin = Math.min(...ys), ymax = Math.max(...ys);
+  let threshVal = null;
+  if (series.threshold){ threshVal = series.threshold[0]; ymin = Math.min(ymin, threshVal); ymax = Math.max(ymax, threshVal); }
+  const pad = (ymax - ymin) * 0.1 || Math.abs(ymax || 1) * 0.1;
+  ymin -= pad; ymax += pad;
+  const xmin = xs[0], xmax = xs[xs.length-1];
+  const xScale = t => PAD_L + (xmax===xmin?0:(t-xmin)/(xmax-xmin)) * (W-PAD_L-PAD_R);
+  const yScale = v => H-PAD_B - (ymax===ymin?0:(v-ymin)/(ymax-ymin)) * (H-PAD_T-PAD_B);
+
+  const colorVar = status==="context" ? "var(--accent)" : `var(--${status})`;
+
+  let bands = "";
+  recRanges.forEach(([s,e])=>{
+    if (e < xmin || s > xmax) return;
+    const x1 = xScale(Math.max(s,xmin)), x2 = xScale(Math.min(e,xmax));
+    bands += `<rect x="${x1.toFixed(1)}" y="${PAD_T}" width="${Math.max(0.5,x2-x1).toFixed(1)}" height="${(H-PAD_T-PAD_B).toFixed(1)}" style="fill:var(--border);opacity:0.6;"></rect>`;
+  });
+
+  let path = "M " + data.map(p=>`${xScale(new Date(p.d).getTime()).toFixed(1)} ${yScale(p.v).toFixed(1)}`).join(" L ");
+  let area = `M ${xScale(xmin).toFixed(1)} ${(H-PAD_B).toFixed(1)} L ` + data.map(p=>`${xScale(new Date(p.d).getTime()).toFixed(1)} ${yScale(p.v).toFixed(1)}`).join(" L ") + ` L ${xScale(xmax).toFixed(1)} ${(H-PAD_B).toFixed(1)} Z`;
+
+  let threshLine = "";
+  if (threshVal !== null){
+    const ty = yScale(threshVal);
+    threshLine = `<line x1="${PAD_L}" y1="${ty.toFixed(1)}" x2="${W-PAD_R}" y2="${ty.toFixed(1)}" style="stroke:var(--watch);stroke-width:1;opacity:0.8;" stroke-dasharray="3,3"></line>`;
+  }
+
+  let realPath = "";
+  if (series.real_data){
+    realPath = `<path d="M ` + series.real_data.map(p=>`${xScale(new Date(p.d).getTime()).toFixed(1)} ${yScale(p.v).toFixed(1)}`).join(" L ") + `" style="fill:none;stroke:var(--ink-3);stroke-width:1.3;" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4,3"></path>`;
+  }
+
+  const last = data[data.length-1];
+  const lx = xScale(new Date(last.d).getTime()), ly = yScale(last.v);
+
+  const svg = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${series.label} trend">
+    ${bands}
+    <path d="${area}" style="fill:${colorVar};opacity:0.12;"></path>
+    <path d="${path}" style="fill:none;stroke:${colorVar};stroke-width:1.8;" stroke-linejoin="round" stroke-linecap="round"></path>
+    ${realPath}
+    ${threshLine}
+    <circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="2.6" style="fill:${colorVar};"></circle>
+  </svg>`;
+
+  return {svg, xScale, yScale, xmin, xmax, W, H};
+}
+
+function attachHover(wrap, chartMeta, series){
+  const svgEl = wrap.querySelector("svg");
+  const tooltip = document.getElementById("tooltip");
+  const data = series.data;
+  svgEl.addEventListener("mousemove", (e)=>{
+    const rect = svgEl.getBoundingClientRect();
+    const relX = (e.clientX - rect.left) / rect.width * chartMeta.W;
+    let nearest = data[0], nearestDist = Infinity;
+    data.forEach(p=>{
+      const px = chartMeta.xScale(new Date(p.d).getTime());
+      const dist = Math.abs(px - relX);
+      if (dist < nearestDist){ nearestDist = dist; nearest = p; }
+    });
+    tooltip.textContent = `${nearest.d}  ·  ${fmtNum(nearest.v, series.unit)} ${series.unit}`;
+    tooltip.style.left = (e.clientX + 12) + "px";
+    tooltip.style.top = (e.clientY - 28) + "px";
+    tooltip.style.opacity = "1";
+  });
+  svgEl.addEventListener("mouseleave", ()=>{ tooltip.style.opacity = "0"; });
+}
+
+function renderCard(series, recRanges){
+  const status = getStatus(series);
+  const chartMeta = drawChart(series, status, recRanges);
+  const card = document.createElement("div");
+  card.className = "card";
+  const statusLabel = status === "context" ? "context" : status;
+  card.innerHTML = `
+    <div class="card-top">
+      <div class="card-label">${series.label}</div>
+      <span class="status-pill status-${status}"><span class="dot" style="background:currentColor;width:6px;height:6px;"></span>${statusLabel}</span>
+    </div>
+    <div class="card-value">
+      <span class="v">${fmtNum(series.latest_value, series.unit)}</span>
+      <span class="u">${series.unit}</span>
+    </div>
+    <div class="chart-wrap">${chartMeta.svg}</div>
+    <div class="card-foot">
+      <span>as of ${series.latest_date}</span>
+      <span>10yr pctl${series.real_data ? " (real)" : ""}: ${series.percentile_10yr ?? "&mdash;"}</span>
+    </div>
+    ${series.real_data ? `<div class="inflation-note"><span class="legend-line"></span> inflation-adjusted &middot; ${series.above_inflation_pct >= 0 ? "+" : ""}${series.above_inflation_pct}pp vs. general inflation over ${series.chart_span_years}yr</div>` : ""}
+    ${LAG_NOTES[series.id] ? `<div class="lag-note">${LAG_NOTES[series.id]}</div>` : ""}
+  `;
+  attachHover(card, chartMeta, series);
+  return card;
+}
+
+const STATUS_RANK = {calm:0, watch:1, critical:2};
+const HORIZONS = ["2026","2027","2028","2029&ndash;31"];
+const SECTORS = [
+  {name:"Housing & Mortgage", seriesIds:null, category:"Housing & Mortgage", events:{}},
+  {name:"Commercial Real Estate", seriesIds:["DRCRELEXFACBS"], events:{"2026":[{amt:"$875&ndash;936B", label:"CRE loans mature"}], "2027":[{amt:"$652B", label:"CRE loans mature"}]}},
+  {name:"Consumer Credit (Auto/Cards)", seriesIds:null, category:"Consumer Credit", events:{}},
+  {name:"Corporate Credit", seriesIds:["DRBLACBS","BAMLH0A0HYM2","BAA10Y"], events:{"2028":[{amt:"$268.8B", label:"B-and-below debt matures"}], "2029&ndash;31":[{amt:"Peak", label:"Speculative-grade wall (pushed from 2029)"}]}},
+  {name:"Labor Market", seriesIds:null, category:"Labor Market", events:{}},
+  {name:"Financial System", seriesIds:["NFCI","STLFSI4"], events:{}},
+];
+
+function worstStatus(payload, sector){
+  const series = sector.seriesIds
+    ? sector.seriesIds.map(id => payload.series.find(s=>s.id===id)).filter(Boolean)
+    : payload.series.filter(s => s.category === sector.category && s.id !== "USREC");
+  let worst = "calm", worstRank = -1;
+  series.forEach(s=>{
+    const st = getStatus(s);
+    if (st === "context") return;
+    if (STATUS_RANK[st] > worstRank){ worstRank = STATUS_RANK[st]; worst = st; }
+  });
+  return worstRank === -1 ? "context" : worst;
+}
+
+function renderStressMap(payload){
+  const head = document.getElementById("stress-map-head");
+  head.innerHTML = `<th>Sector</th><th>Now</th>` + HORIZONS.map(h=>`<th>${h}</th>`).join("");
+  const body = document.getElementById("stress-map-body");
+  body.innerHTML = "";
+  SECTORS.forEach(sector=>{
+    const status = worstStatus(payload, sector);
+    const statusLabel = status === "context" ? "context" : status;
+    const tr = document.createElement("tr");
+    let cells = `<th>${sector.name}</th><td><span class="status-pill status-${status}" style="display:inline-flex;"><span class="dot" style="background:currentColor;width:6px;height:6px;"></span>${statusLabel}</span></td>`;
+    HORIZONS.forEach(h=>{
+      const evts = sector.events[h];
+      if (evts && evts.length){
+        cells += `<td>${evts.map(e=>`<span class="sm-event"><span class="amt">${e.amt}</span> ${e.label}</span>`).join("")}</td>`;
+      } else {
+        cells += `<td class="sm-empty">no scheduled event tracked</td>`;
+      }
+    });
+    tr.innerHTML = cells;
+    body.appendChild(tr);
+  });
+}
+
+async function init(){
+  const res = await fetch("data/dashboard-data.json");
+  const payload = await res.json();
+  const bySeries = {};
+  payload.series.forEach(s => bySeries[s.id] = s);
+  const usrec = bySeries["USREC"];
+  const recRanges = recessionRanges(usrec);
+
+  document.getElementById("updated-stamp").innerHTML = `Data refreshed<br><strong style="color:var(--ink-2)">${new Date(payload.generated_at).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})}</strong>`;
+
+  const counts = {calm:0, watch:0, critical:0, context:0};
+  payload.series.forEach(s => { if (s.id !== "USREC") counts[getStatus(s)]++; });
+  const summaryRow = document.getElementById("summary-row");
+  summaryRow.innerHTML = `
+    <div class="summary-pill"><span class="dot" style="background:var(--critical)"></span><span class="n">${counts.critical}</span> critical</div>
+    <div class="summary-pill"><span class="dot" style="background:var(--watch)"></span><span class="n">${counts.watch}</span> watch</div>
+    <div class="summary-pill"><span class="dot" style="background:var(--calm)"></span><span class="n">${counts.calm}</span> calm</div>
+    <div class="summary-pill"><span class="dot" style="background:var(--context)"></span><span class="n">${counts.context}</span> context-only</div>
+  `;
+
+  const categoriesEl = document.getElementById("categories");
+  CATEGORY_ORDER.forEach(cat=>{
+    const seriesInCat = payload.series.filter(s => s.category === cat && s.id !== "USREC");
+    if (!seriesInCat.length) return;
+    const section = document.createElement("div");
+    section.style.marginBottom = "28px";
+    section.innerHTML = `<div class="section-head" style="margin-bottom:12px;">
+      <h3 style="font-family:'IBM Plex Sans';font-size:1.05rem;font-weight:600;">${cat}</h3>
+      <p style="color:var(--ink-3);font-size:0.82rem;margin-top:2px;">${CATEGORY_NOTE[cat] || ""}</p>
+    </div>`;
+    const grid = document.createElement("div");
+    grid.className = "card-grid";
+    seriesInCat.forEach(s => grid.appendChild(renderCard(s, recRanges)));
+    section.appendChild(grid);
+    categoriesEl.appendChild(section);
+  });
+
+  renderStressMap(payload);
+
+  document.getElementById("footer").innerHTML = `
+    <strong>Three signal classes, not one score.</strong> <em>Scheduled</em> (Tier 2): contracts and maturity dates &mdash; strongest for timing, because the date is already fixed. <em>Leading</em> (Tier 1): is the system weakening right now &mdash; strongest for direction, weak for timing. <em>Trigger</em> (not separately tracked here): a latent problem actually breaking &mdash; accelerating defaults, spreads jumping in days not months, forced sales. In practice: watch for a Tier 1 "critical" reading that starts moving fast rather than sitting still &mdash; that shift, not the level itself, is what a trigger looks like.<br><br>
+    <strong>Methodology.</strong> Status bands use each series' own trailing-10-year percentile, adjusted for whether a rise or fall signals stress; a small set of indicators (Sahm Rule, yield curve, financial-conditions indices, bank-tightening survey) instead use the officially documented trigger line where one exists. "Context" indicators (10-year Treasury yield, money supply, real GDP, income levels) carry no direction judgment &mdash; they're shown for reference, not scored. Inflation-adjusted price lines rebase each nominal series to today's dollars using CPI-U (FRED series CPIAUCNS), month-matched. Recession shading follows the NBER business-cycle dates as tracked by FRED (series USREC). The forward stress map's "Now" column reuses these same live statuses (worst reading per sector); its year columns show only dated figures sourced from Tier 2, never a projected score.<br><br>
+    <strong>Sources.</strong> All Tier 1 series: Federal Reserve Economic Data (FRED), St. Louis Fed &mdash; pulled directly from each series' public CSV endpoint, no API key. Tier 2 structural figures: Mortgage Bankers Association, S&amp;P Global Ratings, Edmunds, Federal Reserve transmission-lag research, the Federal Reserve Financial Stability Report, and the NY Fed Household Debt and Credit Report &mdash; refreshed by hand when those reports update, each stamped with its own date.<br><br>
+    <strong>What this is not.</strong> Historical-lag notes and the forward stress map describe base rates and known schedules from past cycles and signed contracts &mdash; not a forecast or a countdown. The Sahm Rule itself gave a false signal in 2024, and S&amp;P has already revised its own corporate maturity-wall peak twice this year (2028 &rarr; 2029 &rarr; 2031) as refinancing pushed it out. Nothing here predicts a date; it shows where pressure is contractually concentrated and how much cushion currently exists to absorb it.
+  `;
+}
+init();
+</script>
