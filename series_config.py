@@ -31,7 +31,7 @@ SERIES = [
     {"id": "JTSQUR", "label": "Quits Rate", "category": "Labor Market", "unit": "%", "higher_is_worse": False, "threshold": None},
     {"id": "TEMPHELPS", "label": "Temporary Help Employment", "category": "Labor Market", "unit": "thousands", "higher_is_worse": False, "threshold": None},
     {"id": "AWHAEMAN", "label": "Avg Weekly Manufacturing Hours", "category": "Labor Market", "unit": "hours", "higher_is_worse": False, "threshold": None},
-    {"id": "AHETPI", "label": "Average Hourly Earnings", "category": "Labor Market", "unit": "$/hr", "higher_is_worse": False, "threshold": None},
+    {"id": "AHETPI", "label": "Average Hourly Earnings", "category": "Labor Market", "unit": "$/hr", "higher_is_worse": False, "threshold": None, "deflate": True},
 
     # --- Composite / Recession Models ---
     {"id": "SAHMREALTIME", "label": "Sahm Rule Recession Indicator", "category": "Composite Recession Models", "unit": "pp", "higher_is_worse": True, "threshold": (0.50, "Official Sahm Rule trigger (0.50)")},
@@ -54,23 +54,23 @@ SERIES = [
 
     # --- Production & Spending ---
     {"id": "INDPRO", "label": "Industrial Production Index", "category": "Production & Spending", "unit": "index", "higher_is_worse": False, "threshold": None},
-    {"id": "NEWORDER", "label": "Core Capital Goods Orders", "category": "Production & Spending", "unit": "$M", "higher_is_worse": False, "threshold": None},
+    {"id": "NEWORDER", "label": "Core Capital Goods Orders", "category": "Production & Spending", "unit": "$M", "higher_is_worse": False, "threshold": None, "deflate": True},
     {"id": "HTRUCKSSAAR", "label": "Heavy Truck Sales", "category": "Production & Spending", "unit": "millions, SAAR", "higher_is_worse": False, "threshold": None},
     {"id": "ALTSALES", "label": "Light Vehicle Sales", "category": "Production & Spending", "unit": "millions, SAAR", "higher_is_worse": False, "threshold": None},
     {"id": "RRSFS", "label": "Real Retail & Food Services Sales", "category": "Production & Spending", "unit": "$M", "higher_is_worse": False, "threshold": None},
     {"id": "RETAILIRSA", "label": "Retail Inventory/Sales Ratio", "category": "Production & Spending", "unit": "ratio", "higher_is_worse": True, "threshold": None},
     {"id": "TSIFRGHT", "label": "Freight Transportation Services Index", "category": "Production & Spending", "unit": "index", "higher_is_worse": False, "threshold": None},
-    {"id": "PCOPPUSDM", "label": "Global Copper Price", "category": "Production & Spending", "unit": "$/mt", "higher_is_worse": False, "threshold": None},
+    {"id": "PCOPPUSDM", "label": "Global Copper Price", "category": "Production & Spending", "unit": "$/mt", "higher_is_worse": False, "threshold": None, "deflate": True},
 
     # --- Money & Macro ---
-    {"id": "M2SL", "label": "M2 Money Supply", "category": "Money & Macro", "unit": "$B", "higher_is_worse": None, "threshold": None},
+    {"id": "M2SL", "label": "M2 Money Supply", "category": "Money & Macro", "unit": "$B", "higher_is_worse": None, "threshold": None, "deflate": True},
     {"id": "GDPC1", "label": "Real GDP", "category": "Money & Macro", "unit": "$B", "higher_is_worse": False, "threshold": None},
     {"id": "PSAVERT", "label": "Personal Savings Rate", "category": "Money & Macro", "unit": "%", "higher_is_worse": False, "threshold": None},
     {"id": "UMCSENT", "label": "Consumer Sentiment (U. Michigan)", "category": "Money & Macro", "unit": "index", "higher_is_worse": False, "threshold": None},
 
     # --- Income & Cost of Living ---
-    {"id": "PI", "label": "Personal Income", "category": "Income & Cost of Living", "unit": "$B", "higher_is_worse": False, "threshold": None},
-    {"id": "A229RC0", "label": "Disposable Income Per Capita", "category": "Income & Cost of Living", "unit": "$", "higher_is_worse": False, "threshold": None},
+    {"id": "PI", "label": "Personal Income", "category": "Income & Cost of Living", "unit": "$B", "higher_is_worse": False, "threshold": None, "deflate": True},
+    {"id": "A229RC0", "label": "Disposable Income Per Capita", "category": "Income & Cost of Living", "unit": "$", "higher_is_worse": False, "threshold": None, "deflate": True},
     {"id": "W875RX1", "label": "Real Personal Income (ex. Transfers)", "category": "Income & Cost of Living", "unit": "$B", "higher_is_worse": False, "threshold": None},
     {"id": "MEHOINUSA672N", "label": "Real Median Household Income", "category": "Income & Cost of Living", "unit": "$", "higher_is_worse": False, "threshold": None},
     {"id": "GASREGW", "label": "Weekly Gas Price (Regular)", "category": "Income & Cost of Living", "unit": "$/gal", "higher_is_worse": True, "threshold": None, "deflate": True},
